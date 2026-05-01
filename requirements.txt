@@ -1,0 +1,33 @@
+openai
+# --- Core Framework & Web Server ---
+fastapi==0.110.0
+uvicorn==0.27.1
+python-dotenv==1.0.1
+pydantic-settings==2.2.1
+
+# --- Vector Database (Qdrant) ---
+qdrant-client==1.8.0
+
+# --- Graph Database (Neo4j) ---
+neo4j==5.18.0
+
+# --- Data Processing (Extractors & Transformers) ---
+pandas==2.2.1
+pyarrow==15.0.0            # Để đọc file .parquet của bạn
+sentence-transformers==2.6.1
+beautifulsoup4==4.12.3     # Làm sạch HTML cho transformers
+tiktoken==0.6.0            # Đếm token
+
+# --- Utilities ---
+numpy==1.26.4
+tqdm==4.66.2               # Thanh progress bar khi nạp 22k văn bản
+
+langchain==0.1.13
+langchain-community==0.0.29
+langgraph>=0.0.32,<0.1.0    # Sửa thành dải phiên bản linh hoạt hơn
+langchain-openai==0.1.1    
+
+# --- Memory & Databases ---
+psycopg2-binary==2.9.9
+langchain-postgres          # Bỏ số phiên bản cứng để nó tự khớp với langgraph
+redis==5.0.3

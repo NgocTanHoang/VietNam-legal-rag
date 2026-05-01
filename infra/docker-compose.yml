@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # 1. Database cho Memory và Lưu trữ bền vững
+  postgres:
+    image: postgres:15-alpine
+    container_name: legal_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password123}
+      POSTGRES_DB: ${POSTGRES_DB:-legal_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+  # 2. Cache cho Short-term Memory (Chat Session)
+  redis:
+    image: redis:alpine
+    container_name: legal_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data
+
+  # 3. Vector Database
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: legal_qdrant
+    restart: always
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./data/qdrant:/qdrant/storage
+
+  # 4. Graph Database
+  neo4j:
+    image: neo4j:latest
+    container_name: legal_neo4j
+    restart: always
+    ports:
+      - "7474:7474"   # HTTP
+      - "7687:7687"   # Bolt (Dùng cho Python Driver)
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD:-password123}
+    volumes:
+      - ./data/neo4j:/data
+      - ./data/neo4j_logs:/logs
+
+  # 5. Your Python AI Agent App
+  app:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    container_name: legal_agent_app
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+      - qdrant
+      - neo4j
+    env_file:
+      - ../.env
+    ports:
+      - "8000:8000"
