@@ -22,6 +22,13 @@ Hệ thống Lexora vận hành trên hai nền tảng cơ sở dữ liệu phâ
 *   **Neo4j Graph Database:** Lập bản đồ mối quan hệ lập pháp chặt chẽ với gần **1 triệu liên kết thực thể** (chi tiết bao gồm **116.000 nút văn bản/điều khoản** và **889.000 cạnh liên kết** biểu diễn quan hệ: *hướng dẫn*, *thay thế*, *sửa đổi*, *bổ sung*, *chi tiết thi hành*).
 *   **Phạm vi bao phủ:** Toàn bộ hệ thống văn bản pháp luật hiện hành tại Việt Nam thuộc các lĩnh vực trọng yếu bao gồm: *Dân sự, Hình sự, Đất đai, Thương mại, Doanh nghiệp, Đầu tư, Thuế và Giao dịch điện tử*.
 
+### 📷 Giao Diện Hệ Thống (System Interfaces)
+Dưới đây là một số hình ảnh thực tế về giao diện người dùng (Web UI Dashboard) sang trọng của hệ thống Lexora hoạt động ở cả hai chế độ tối (Dark Mode) và sáng (Light Mode):
+
+| Chế Độ Tối (Dark Mode) | Chế Độ Sáng (Light Mode) |
+|---|---|
+| ![Dark Mode Interface](assets/lexora_dark_mode_ui.png) | ![Light Mode Interface](assets/lexora_light_mode_ui.png) |
+
 > [!IMPORTANT]
 > **Định Vị Công Nghệ:**
 > Lexora được thiết kế chuyên dụng cho các tập đoàn lớn, các văn phòng luật sư và các tổ chức hành chính công đòi hỏi độ chính xác tuyệt đối trong việc trích dẫn căn cứ pháp lý và khả năng chịu tải đồng thời vượt trội.
