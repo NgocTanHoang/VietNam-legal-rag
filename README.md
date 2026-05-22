@@ -183,22 +183,22 @@ Tạo một tệp `.env` tại thư mục gốc của dự án và điền đầ
 # ═══════════════════════════════════════════════════════════════
 # 🤖 AI / LLM API Keys (Cung cấp ít nhất 1 trong các Key bên dưới)
 # ═══════════════════════════════════════════════════════════════
-GEMINI_API_KEY=AIzaSyDakz01m4RT4m3eFscSQmATKX9...
-OPENROUTER_API_KEY=sk-or-v1-e98ec2ccbb6cccfc2697e633ce7...
-NVIDIA_API_KEY=nvapi-lq5_CRG7z91HWogjdm3S4gzFts...
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
+OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY_HERE
+NVIDIA_API_KEY=YOUR_NVIDIA_API_KEY_HERE
 
 # ═══════════════════════════════════════════════════════════════
 # 🔍 Tavily & Jina Reader Config (Săn tin Dự thảo Động)
 # ═══════════════════════════════════════════════════════════════
-TAVILY_API_KEY=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...
+TAVILY_API_KEY=YOUR_TAVILY_API_KEY_HERE
 JINA_READER_ENDPOINT=https://r.jina.ai/
 
 # ═══════════════════════════════════════════════════════════════
 # 🗄️ Cấu Hình Cơ Sở Dữ Liệu Tích Hợp
 # ═══════════════════════════════════════════════════════════════
 # PostgreSQL Config
-POSTGRES_USER=admin
-POSTGRES_PASSWORD=pgpassword
+POSTGRES_USER=your_postgres_user
+POSTGRES_PASSWORD=your_postgres_password
 POSTGRES_DB=legal_rag_db
 POSTGRES_HOST=localhost
 
@@ -207,22 +207,22 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 
 # Qdrant Cloud (Vector Database)
-QDRANT_HOST=https://2dac285a-ec77-41df-9ee2-48416a7549c5.us-east4-0.gcp.cloud.qdrant.io
+QDRANT_HOST=https://your-qdrant-cluster-id.us-east4-0.gcp.cloud.qdrant.io
 QDRANT_PORT=6333
-QDRANT_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIiwic3ViamVjdCI6ImFwaS1rZXk6YW...
+QDRANT_API_KEY=YOUR_QDRANT_API_KEY_HERE
 
 # Neo4j Graph DB Config
 NEO4J_URI=bolt://localhost:7687
 NEO4J_USER=neo4j
-NEO4J_PASSWORD=password123
+NEO4J_PASSWORD=your_neo4j_password_here
 
 # ═══════════════════════════════════════════════════════════════
 # 💬 Tích Hợp Lark Suite Webhook Chatbot (Tùy chọn)
 # ═══════════════════════════════════════════════════════════════
-LARK_APP_ID=cli_a9549f95fb39de18
-LARK_APP_SECRET=jK8sFEstI74cBetVykOGjcOGyxzCuu...
-LARK_ENCRYPT_KEY=
-LARK_VERIFICATION_TOKEN=
+LARK_APP_ID=YOUR_LARK_APP_ID_HERE
+LARK_APP_SECRET=YOUR_LARK_APP_SECRET_HERE
+LARK_ENCRYPT_KEY=YOUR_LARK_ENCRYPT_KEY_HERE
+LARK_VERIFICATION_TOKEN=YOUR_LARK_VERIFICATION_TOKEN_HERE
 ```
 
 ---
