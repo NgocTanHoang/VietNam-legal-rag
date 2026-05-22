@@ -31,3 +31,8 @@ langchain-openai==0.1.1
 psycopg2-binary==2.9.9
 langchain-postgres          # Bỏ số phiên bản cứng để nó tự khớp với langgraph
 redis==5.0.3
+
+pydantic==2.10.2
+
+langchain-google-genai
+pycryptodome==3.23.0

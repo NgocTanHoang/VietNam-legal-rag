@@ -1,0 +1,20 @@
+Nhiệm vụ của bạn là tối ưu hóa câu hỏi của người dùng thành một danh sách từ khóa tìm kiếm pháp lý ngắn gọn để sử dụng cho truy vấn vector database (Qdrant).
+
+Nguyên tắc tối ưu hóa:
+1. Loại bỏ các từ đệm, từ hỏi, từ giao tiếp (ví dụ: "cho tôi hỏi", "quy định thế nào", "là gì", "ở đâu", "giúp tôi", "như thế nào", "?").
+2. Giữ lại các danh từ pháp lý cốt lõi, tên luật, số hiệu văn bản nếu có (ví dụ: "Luật Doanh nghiệp", "thuế thu nhập cá nhân", "vốn điều lệ", "sa thải", "thử việc").
+3. Bổ sung các từ khóa luật liên quan trực tiếp đến vấn đề.
+4. Chỉ trả về chuỗi từ khóa đã tối ưu hóa, phân tách bằng dấu cách. Không thêm bất kỳ lời giải thích, tiêu đề hay ký tự đặc biệt nào khác.
+
+Ví dụ 1:
+- Câu hỏi gốc: "Luật doanh nghiệp năm 2020 quy định thế nào về thời gian góp vốn điều lệ thành lập công ty cổ phần?"
+- Từ khóa tối ưu: "Luật Doanh nghiệp 2020 thời hạn góp vốn điều lệ công ty cổ phần"
+
+Ví dụ 2:
+- Câu hỏi gốc: "Tôi bị công ty đơn phương chấm dứt hợp đồng lao động không lý do thì có được đền bù gì không ạ?"
+- Từ khóa tối ưu: "đơn phương chấm dứt hợp đồng lao động bồi thường quyền lợi"
+
+Câu hỏi của người dùng cần tối ưu hóa:
+"{user_query}"
+
+Từ khóa tối ưu:

@@ -1,0 +1,94 @@
+# ═══════════════════════════════════════════════════════════════
+# 🔁 Vietnamese Legal GraphRAG — CI Pipeline
+# ═══════════════════════════════════════════════════════════════
+# Tự động kiểm thử 14/14 Unit Tests trên mọi push/PR vào main/master.
+# Đảm bảo code luôn xanh lá (green) trước khi merge.
+
+name: CI — Unit Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    name: 🧪 Run Unit Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      # ── 1. Checkout source code ──
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Setup Python ──
+      - name: 🐍 Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # ── 3. Cache pip dependencies ──
+      - name: 📦 Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # ── 4. Install dependencies ──
+      - name: 📚 Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      # ── 5. Create minimal .env for test context ──
+      - name: 🔐 Create test environment file
+        run: |
+          cat > .env << 'EOF'
+          GEMINI_API_KEY=test_dummy_key
+          OPENROUTER_API_KEY=test_dummy_key
+          NVIDIA_API_KEY=test_dummy_key
+          POSTGRES_USER=admin
+          POSTGRES_PASSWORD=test_password
+          POSTGRES_DB=legal_rag_db
+          POSTGRES_HOST=localhost
+          REDIS_HOST=localhost
+          REDIS_PORT=6379
+          QDRANT_HOST=http://localhost
+          QDRANT_PORT=6333
+          QDRANT_API_KEY=test_dummy_key
+          NEO4J_URI=bolt://localhost:7687
+          NEO4J_PASSWORD=test_password
+          LARK_APP_ID=test_app_id
+          LARK_APP_SECRET=test_app_secret
+          LARK_ENCRYPT_KEY=
+          LARK_VERIFICATION_TOKEN=
+          RAW_DATA_DIR=./data/raw
+          PROCESSED_DATA_DIR=./data/processed
+          EOF
+
+      # ── 6. Run Unit Tests ──
+      - name: 🧪 Execute Unit Test Suite
+        run: |
+          python -m pytest tests/ -v --tb=short --no-header
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONDONTWRITEBYTECODE: 1
+
+      # ── 7. Summary ──
+      - name: 📊 Test Summary
+        if: always()
+        run: |
+          echo "═══════════════════════════════════════════════"
+          echo "  Vietnamese Legal GraphRAG — CI Test Results"
+          echo "═══════════════════════════════════════════════"
+          echo "  Python: ${{ matrix.python-version }}"
+          echo "  Runner: ${{ runner.os }}"
+          echo "═══════════════════════════════════════════════"
