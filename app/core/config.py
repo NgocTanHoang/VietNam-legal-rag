@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     NVIDIA_API_KEY: Optional[str] = None
     OPENROUTER_API_KEY: Optional[str] = None
     
+    # Scraper & API Keys
+    TAVILY_API_KEY: Optional[str] = None
+    JINA_READER_ENDPOINT: str = "https://r.jina.ai/"
+    
     # Default model parameters
     EMBED_MODEL: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     
