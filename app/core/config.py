@@ -3,6 +3,9 @@ from typing import Optional
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
+    APP_HOST: str = "127.0.0.1"
+    APP_PORT: int = 8888
+
     # Qdrant Config
     QDRANT_HOST: Optional[str] = None
     QDRANT_PORT: Optional[int] = 6333
@@ -18,11 +21,18 @@ class Settings(BaseSettings):
     # Redis Config
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
+    REDIS_URL: Optional[str] = None
     
     # LLM API Keys
     GEMINI_API_KEY: Optional[str] = None
     NVIDIA_API_KEY: Optional[str] = None
     OPENROUTER_API_KEY: Optional[str] = None
+    GEMINI_MODEL: str = "gemini-1.5-flash"
+    OPENROUTER_MODEL: str = "meta-llama/llama-3.3-70b-instruct:free"
+    OPENROUTER_FALLBACK_MODEL: str = "openai/gpt-oss-120b:free"
+    NVIDIA_MODEL: str = "meta/llama-3.1-70b-instruct"
+    PREFERRED_LLM_PROVIDER: str = "auto"
+    ENABLE_SECONDARY_LLM_PROVIDERS: bool = True
     
     # Scraper & API Keys
     TAVILY_API_KEY: Optional[str] = None
@@ -30,6 +40,8 @@ class Settings(BaseSettings):
     
     # Default model parameters
     EMBED_MODEL: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    INFRA_TIMEOUT_SECONDS: int = 5
+    LLM_TIMEOUT_SECONDS: float = 20.0
     
     # Lark Suite Settings
     LARK_APP_ID: str = ""
@@ -53,5 +65,9 @@ class Settings(BaseSettings):
                 return self.QDRANT_HOST
             return f"{self.QDRANT_HOST}:{self.QDRANT_PORT}"
         return "http://localhost:6333"
+
+    @property
+    def api_base_url(self) -> str:
+        return f"http://{self.APP_HOST}:{self.APP_PORT}"
 
 settings = Settings()

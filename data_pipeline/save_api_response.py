@@ -1,8 +1,11 @@
 import requests
 import json
+import os
+
+API_BASE_URL = os.getenv("LEXORA_API_BASE_URL", "http://127.0.0.1:8888").rstrip("/")
 
 if __name__ == "__main__":
-    url = "http://localhost:8000/api/v1/chat"
+    url = f"{API_BASE_URL}/api/v1/chat"
     payload = {
         "query": "Quy định về hệ thống kiểm soát nội bộ của ngân hàng thương mại?"
     }
