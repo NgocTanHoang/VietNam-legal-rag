@@ -67,6 +67,36 @@ class LegalAgent:
         }
         
         logging.info(f"--- Bắt đầu thực thi Agent cho câu hỏi: '{query}' ---")
-        output = self.app.invoke(inputs)
+        try:
+            output = self.app.invoke(inputs)
+        except KeyError as exc:
+            if str(exc).strip("'") != "__start__":
+                raise
+            logging.warning(
+                "LangGraph runtime lỗi tại nút __start__. Chuyển sang luồng suy luận tuần tự để duy trì dịch vụ.",
+                exc_info=True,
+            )
+            output = self._run_sequential(inputs)
         logging.info("--- Hoàn thành thực thi Agent ---")
         return output
+
+    def _run_sequential(self, state: AgentState) -> Dict[str, Any]:
+        working_state: Dict[str, Any] = dict(state)
+
+        retrieval_result = retrieval_node(working_state)
+        working_state.update(retrieval_result)
+
+        route = route_after_retrieval(working_state)
+        if route == "rewrite_query":
+            rewrite_result = query_rewriter_node(working_state)
+            working_state.update(rewrite_result)
+            retrieval_result = retrieval_node(working_state)
+            working_state.update(retrieval_result)
+
+        graph_result = graph_node(working_state)
+        working_state.update(graph_result)
+
+        generator_result = generator_node(working_state)
+        working_state.update(generator_result)
+
+        return working_state

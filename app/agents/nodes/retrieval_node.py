@@ -1,11 +1,12 @@
 import logging
-from typing import Dict, Any
+from typing import Any, Dict
+
+from app.agents.state import AgentState
 from app.core.config import settings
 from app.services.qdrant_service import QdrantService
-from app.agents.state import AgentState
 
-# Khởi tạo Cache cho Embedding Model ở module-level để tránh reload nhiều lần làm chậm API
 _embed_model = None
+
 
 def get_embed_model():
     global _embed_model
@@ -13,63 +14,63 @@ def get_embed_model():
         try:
             logging.info(f"Đang tải mô hình embedding cục bộ: {settings.EMBED_MODEL}...")
             from sentence_transformers import SentenceTransformer
+
             _embed_model = SentenceTransformer(settings.EMBED_MODEL)
-            logging.info("Tải mô hình embedding cục bộ thành công!")
-        except Exception as e:
+        except Exception as exc:
             logging.warning(
-                f"Lỗi khi tải mô hình cục bộ sentence-transformers: {str(e)}. "
-                f"Tự động kích hoạt chế độ Fallback sử dụng Gemini Embedding API (models/text-embedding-004)..."
+                f"Lỗi khi tải sentence-transformers: {exc}. Chuyển sang fallback Gemini embedding."
             )
             _embed_model = "gemini"
     return _embed_model
 
+
 def retrieval_node(state: AgentState) -> Dict[str, Any]:
-    """
-    Node truy vấn Vector Database Qdrant.
-    Sử dụng câu hỏi đã tối ưu (query_rewritten) nếu có, nếu không sẽ dùng câu hỏi gốc (raw_query).
-    """
-    # Lấy query để search
     query_text = state.get("query_rewritten") or state.get("raw_query") or ""
     if not query_text:
-        last_msg = state.get("messages")[-1].content if state.get("messages") else ""
-        query_text = last_msg
-        
-    logging.info(f"--- Nodes LangGraph: Đang truy vấn Qdrant cho từ khóa: '{query_text}' ---")
-    
+        last_message = state.get("messages")[-1].content if state.get("messages") else ""
+        query_text = last_message
+
+    logging.info(f"--- Retrieval Node: truy vấn Qdrant cho '{query_text}' ---")
+
     try:
-        # 1. Tính toán vector embedding cho câu truy vấn (Thử lấy từ cache trước)
+        qdrant_service = QdrantService()
+        if not qdrant_service.is_healthy():
+            logging.warning("Qdrant chưa sẵn sàng. Bỏ qua retrieval và trả về ngữ cảnh rỗng.")
+            return {"context_chunks": []}
+
         from app.services.redis_service import RedisService
+
         redis_service = RedisService()
         query_vector = redis_service.get_embedding(query_text)
-        
+
         if query_vector is None:
             model = get_embed_model()
             if model == "gemini":
+                if not settings.GEMINI_API_KEY:
+                    logging.warning("Thiếu GEMINI_API_KEY cho fallback embedding. Trả về retrieval rỗng.")
+                    return {"context_chunks": []}
                 import google.generativeai as genai
+
                 genai.configure(api_key=settings.GEMINI_API_KEY)
-                resp = genai.embed_content(
+                response = genai.embed_content(
                     model="models/text-embedding-004",
                     content=query_text,
                     task_type="retrieval_query",
-                    output_dimensionality=384
+                    output_dimensionality=384,
                 )
-                query_vector = resp["embedding"]
+                query_vector = response["embedding"]
             else:
                 query_vector = model.encode(query_text).tolist()
-            
-            # Lưu lại vào Cache
+
             redis_service.set_embedding(query_text, query_vector)
-        
-        # 2. Tìm kiếm trong Qdrant Cloud
-        qdrant_service = QdrantService()
+
         chunks = qdrant_service.search_legal_documents(
             query_vector=query_vector,
             limit=5,
-            score_threshold=0.35
+            score_threshold=0.35,
         )
-        
         logging.info(f"Qdrant tìm thấy {len(chunks)} đoạn văn bản phù hợp.")
         return {"context_chunks": chunks}
-    except Exception as e:
-        logging.error(f"Lỗi xảy ra tại Retrieval Node: {str(e)}", exc_info=True)
+    except Exception as exc:
+        logging.error(f"Lỗi tại Retrieval Node: {exc}", exc_info=True)
         return {"context_chunks": []}
